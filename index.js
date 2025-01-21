@@ -1,7 +1,7 @@
 const http = require("http");
 const getBodyData = require('./util')
 const {v4} = require('uuid')
-const books = [
+let books = [
   {
     id: "1",
     title: "Book 1",
@@ -45,10 +45,10 @@ const server = http.createServer(async (req, res) => {
   }
   else if(req.url.match(/\/books\/\w+/)  && req.method === "GET"){
     const id = req.url.split('/')[2]
-    const book = books.find(b => b.id == id)
+    const book = books.find(b => b.id === id)
     res.writeHead(200, {
-        "Content-Type": "application/json charset=utf8",
-      });
+      "Content-Type": "application/json charset=utf8",
+    });
       const resp = {
         status: 'OK',
         book
@@ -62,9 +62,9 @@ const server = http.createServer(async (req, res) => {
     const inx = books.findIndex(b => b.id === id)
     const changeBooks = {
         id: books[inx].id,
-        title:title || books[inx].title,
-        page:page || books[inx].page,
-        auther:auther || books[inx].auther
+        title: title || books[inx].title,
+        page: page || books[inx].page,
+        auther: auther || books[inx].auther
     }
     books[inx] == changeBooks
     res.writeHead(200, {
@@ -72,10 +72,22 @@ const server = http.createServer(async (req, res) => {
       });
       const resp = {
         status: 'OK',
-        changeBooks
+        book: changeBooks
       }
       res.end(JSON.stringify(resp))
   }
+  else if(req.url.match(/\/books\/\w+/)  && req.method === "DELETE"){
+    const id = req.url.split('/')[2]
+    books = books.filter(b=> b.id !== id)
+    res.writeHead(200, {
+      "Content-Type": "application/json charset=utf8",
+    });
+    const resp = {
+      status: 'DELETE',
+    }
+    res.end(JSON.stringify(resp))
+  }
+
 });
 
 server.listen(3000, () => console.log("Server running on port: 3000"));
